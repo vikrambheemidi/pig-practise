@@ -1,0 +1,62 @@
+a1= load '/home/hduser/txns1.txt' using PigStorage(',') as (id,date,custid,amount:double,category,product,city,state,type);a4: {group: chararray,a3: {(group: bytearray,typesales: double)}}
+1   a1= load '/home/hduser/txns1.txt' using PigStorage(',') as (id,date,custid,amount:double,category,product,city,state,type);
+2   a2= group a1 by type;
+3   a3= foreach a2 generate group,SUM(a1.amount);
+4   a1= load '/home/hduser/txns1.txt' using PigStorage(',') as (id,date,custid,amount:double,category,product,city,state,type);
+5   a2= group a1 by type;
+6   a3= foreach a2 generate group, ROUND_TO(SUM(a1.amount),2) as typesales;
+7   a4= group a3 all;
+8   a5= foreach a4 generate SUM(a3.typesales) as totalamt;
+9   a6= foreach a3 generate $0, $1, ROUND_TO((($1*100)/a5.totalamt),2);
+
+3   cust= load '/home/hduser/custs' using PigStorage(',') as (custid,firstname,lastname,age:long,profession);
+4   txn= load '/home/hduser/txns1.txt' using PigStorage(',') as (txnid,date,custid,amount:double,category,product,city,state,type);
+5   custlessthan50= filter cust by age<50;
+6   groupbycust= group txn by custid;
+7   spendbycust= foreach groupbycust generate group, SUM(txn.amount) as total;
+8   custmorethan500= filter spendbycust by total>500;
+9   joined= join custmorethan500 by $0,cust by $0;
+10   agelessthan50= filter joined by age<50;
+11   final= foreach agelessthan50 generate $0, $3, $4, $5, $6, ROUND_TO($1,2);
+
+
+year= load '/home/hduser/2000.txt' using PigStorage(',') as (custid:int,cat:chararray,jan:double,feb:double,mar:double,apr:double,may:double,jun:double,jul:double,aug:double,sep:double,oct:double,nov:double,dec:double);
+ year11: {custid: int,cat: chararray,total: double}
+
+year1= load '/home/hduser/2001.txt' using PigStorage(',') as (custid:int,cat:chararray,jan:double,feb:double,mar:double,apr:double,may:double,jun:double,jul:double,aug:double,sep:double,oct:double,nov:double,dec:double);
+year22: {custid: int,cat: chararray,total: double
+
+year2= load '/home/hduser/2002.txt' using PigStorage(',') as (custid:int,cat:chararray,jan:double,feb:double,mar:double,apr:double,may:double,jun:double,jul:double,aug:double,sep:double,oct:double,nov:double,dec:double);
+year33: {custid: int,cat: chararray,total: double}
+
+year123= join year11 by custid,year22 by custid,year33 by custid;
+
+year123: {year11::custid: int,year11::cat: chararray,year11::total: double,year22::custid: int,year22::cat: chararray,year22::total: double,year33::custid: int,year33::cat: chararray,year33::total: double}
+
+
+
+year3= foreach year123 generate $0, $1, $2, $5, $8;
+gc1= foreach year3 generate $0, $1,$2,$3,$4,(($3-$2)/$2*100),(($4-$3)/$3*100);
+gc2= foreach gc1 generate $0, $1,$2,$3,$4,$5,$6,($5+$6)/2;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
