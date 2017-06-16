@@ -1,0 +1,18 @@
+a= load '/home/hduser/weblog' using PigStorage('\t') as (name:chararray,bank:chararray,total:double);
+a: {name: chararray,bank: chararray,total: double}
+
+
+
+b= load '/home/hduser/gateway' using PigStorage('\t') as (bank:chararray,successrate:float);
+b: {bank: chararray,successrate: float}
+
+ab= join a by bank,b by bank;
+ab: {a::name: chararray,a::bank: chararray,a::total: double,b::bank: chararray,b::successrate: float}
+
+abc= group ab by name;
+abc: {group: chararray,ab: {(a::name: chararray,a::bank: chararray,a::total: double,b::bank: chararray,b::successrate: float)}}
+
+abcd= foreach abc generate group,AVG(ab.$4);
+(john,91.75)
+(rita,88.5)
+

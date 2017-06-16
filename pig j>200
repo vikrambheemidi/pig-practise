@@ -1,0 +1,16 @@
+a= load '/home/hduser/piggi1.txt' using PigStorage(',') as (bid:int,price:double,auid:int);
+a: {bid: int,price: double,auid: int}
+
+aa= filter a by price>=200;
+aa: {bid: int,price: double,auid: int}
+
+b= load '/home/hduser/piggi2.txt' using PigStorage(',') as (auid:int,auname:chararray);
+b: {auid: int,auname: chararray}
+
+bb= filter b by SUBSTRING(auname,0,1)=='j';
+bb: {auid: int,auname: chararray}
+
+
+ab= join aa by $2, bb by $0;
+
+store ab into '/storeinfobook' using PigStorage('|');
